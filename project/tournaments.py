@@ -34,9 +34,8 @@ class Swiss(Tournament):
         if quantidade_jogadores % 2 != 0:
             z = random.sample(lst_players, 1)
             return z
-        else:
-            return False
 
+        
         
         
 
