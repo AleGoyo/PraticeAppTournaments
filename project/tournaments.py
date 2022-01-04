@@ -78,3 +78,12 @@ class Swiss(Tournament):
             print(f'O Jogador{z[0]} está de BYE')
             self._table[z[0]]['WIN'].append('BYE')
             return z[0]
+        else:
+            return False
+
+        # function to get the number of rounds
+    @staticmethod
+    def number_of_rounds_swiss(self,number_of_players):
+        for x in range(number_of_players):
+            if pow(2, x) >= number_of_players:
+                return int(x)

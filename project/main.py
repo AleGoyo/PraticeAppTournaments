@@ -4,11 +4,7 @@ from project import Player
 from project import tournaments
 
 
-# function to get the number of rounds
-def number_of_rounds_swiss(number_of_players):
-    for x in range(number_of_players):
-        if pow(2, x) >= number_of_players:
-            return int(x)
+
 
 
 # function the check the first bye
