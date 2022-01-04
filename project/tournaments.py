@@ -19,6 +19,7 @@ class Tournament(Player):
 
     @table.setter
     def table(self, names):
+        # dict with a deepcopy
         self._table.update({i: copy.deepcopy(self.kind_results) for i in names})
 
     def checking_players(self, name1, name2):
@@ -47,9 +48,9 @@ class Tournament(Player):
         else:
             print(Tournament.check(self, player1, player2))
 
-    def getting_victory(self, name):
+    def getting_points(self, name):
         if name in self._table:
-            return self._table[name]['WIN']
+            return int(len(self._table[name]['WIN'])*3 + len(self._table[name]['DRAW']))
 
     @staticmethod
     def merge(dic_1, dic_2):
@@ -64,12 +65,16 @@ class Swiss(Tournament):
     def __getitem__(self, item):
         return self._table[item]
 
-    def byes(self):
-        pass
+    def byes(self, names):
+        bye_1 = {names: Tournament.getting_points(self, names) for names in names}
+        bye_return = min(bye_1, key=bye_1.get)
+        self._table[bye_return]['WING'].append('BYE')
+        return bye_return
 
     @staticmethod
     def first_bye(self):
         if len(self._table) % 2 != 0:
             z = random.sample(list(self._table), 1)
             print(f'O Jogador{z[0]} está de BYE')
+            self._table[z[0]]['WIN'].append('BYE')
             return z[0]
