@@ -1,7 +1,5 @@
 # libs:
-
-from project import Player
-from project import tournaments
+from project.tournaments import *
 
 
 
@@ -83,11 +81,12 @@ if __name__ == '__main__':
                 print('Não há Jogadores registrados!')
                 continue
             else:
-                number_rounds = number_of_rounds_swiss(len(registered_players))
+                swiss = Swiss(registered_players)
+                number_rounds = swiss.number_of_rounds_swiss(len(registered_players))
                 print(f'Serão {number_rounds} rodadas')
                 sheet_game = {}
                 if len(registered_players) % 2 != 0:
-                    tournaments.Swiss.first_bye(len(registered_players), registered_players)
+                    Tournament.Swiss.first_bye(len(registered_players), registered_players)
 
                 else:
                     pass
