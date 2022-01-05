@@ -23,14 +23,13 @@ class Tournament(Player):
     def table(self):
         return self._table
 
-    def creat_table(self, names):  # function to creat the table for the tournament
+    def create_table(self, names):  # function to create the table for the tournament
         # dict with a deepcopy
         self._table.update({i: copy.deepcopy(self.kind_results) for i in names})
 
     def checking_players(self, name1, name2):
-        if name1 in self._table:
-            if name2 in Tournament.table:
-                return True
+        if name1 and name2 in self._table:
+            return True
         elif name1 not in Tournament.table:
             return f'O Jogador {name1} não foi registrado'
         elif name2 not in Tournament.table:
@@ -56,9 +55,7 @@ class Tournament(Player):
 
     def getting_points(self, name):
         if name in self.table:
-
             return int(len(self.table[name]['WIN']) * 3 + len(self.table[name]['DRAW']))
-
 
     @staticmethod
     def merge(dic_1, dic_2):
@@ -78,14 +75,14 @@ class Swiss(Tournament):
         sv = []  # sum of the victory of the other players
         d = []  # sum of the draw of the other players
         for i in self.table:
-            if i is not name and i in self.table[name]['WIN']:
+            if i is not name and i in self.table[name]['WIN'] or i in self.table[name]['DRAW']:
                 sv.append(len(self.table[i]['WIN']))
                 d.append(len(self.table[i]['DRAW']))
         sb = ((sum(sv) * 3) + (sum(d) * 1))  # calculation of tie break of Sonnenborn-Berger
         return sb
 
     def starting(self):
-        Tournament.creat_table(self, self.names)
+        return Tournament.create_table(self, self.names)
 
     def byes(self, names):
         bye_1 = {names: Tournament.getting_points(self, names) for names in names}
@@ -96,7 +93,7 @@ class Swiss(Tournament):
     def first_bye(self):
         if len(self.table) % 2 != 0:
             z = random.sample(list(self.table), 1)
-            print(f'O Jogador{z[0]} está de BYE')
+            print(f'O Jogador{z[0]} esta de BYE')
             Tournament.__setitem__(self, z[0], 'BYE', 'WIN')
             return z[0]
         else:
