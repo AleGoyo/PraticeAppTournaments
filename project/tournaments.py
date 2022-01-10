@@ -8,7 +8,7 @@ class Tournament(Player):
     def __init__(self):
         super().__init__()
         self._table = {}
-        self.kind_results = {'WIN': [], 'LOSSES': [], 'DRAW': []}
+        self.kind_results = {'WIN': [], 'LOSSES': [], 'DRAW': [], 'POINTS': [], 'TIE BREAK': []}
 
     def __len__(self):
         return len(self._table)
@@ -78,17 +78,17 @@ class Swiss(Tournament):
             if i is not name and i in self.table[name]['WIN'] or i in self.table[name]['DRAW']:
                 sv.append(len(self.table[i]['WIN']))
                 d.append(len(self.table[i]['DRAW']))
-        sb = ((sum(sv) * 3) + (sum(d) * 1))  # calculation of tie break of Sonnenborn-Berger
-        return sb
+        sb = ((sum(sv) * 3) + (sum(d) * 1))  # calculating the tie break of Sonnenborn-Berger
+        self.table[name]['TIE BREAK'].append(sb)
 
     def starting(self):
         return Tournament.create_table(self, self.names)
 
-    def byes(self, names):
-        bye_1 = {names: Tournament.getting_points(self, names) for names in names}
-        bye_return = min(bye_1, key=bye_1.get)
-        Tournament.__setitem__(self, bye_return, 'BYE', 'WIN')
-        return bye_return
+    def first_pairing(self):
+        pass
+
+    def pairing(self):
+        pass
 
     def first_bye(self):
         if len(self.table) % 2 != 0:
@@ -99,9 +99,13 @@ class Swiss(Tournament):
         else:
             return False
 
-        # function to get the number of rounds
+    def byes(self, names):
+        bye_1 = {names: Tournament.getting_points(self, names) for names in names}
+        bye_return = min(bye_1, key=bye_1.get)
+        Tournament.__setitem__(self, bye_return, 'BYE', 'WIN')
+        return bye_return
 
-    @staticmethod
+    @staticmethod  # function to get the number of rounds
     def number_of_rounds_swiss(self):
         for x in range(Tournament.__len__(self._table)):
             if pow(2, x) >= Tournament.__len__(self._table):
