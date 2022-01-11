@@ -28,20 +28,20 @@ class Tournament(Player):
         self._table.update({i: copy.deepcopy(self.kind_results) for i in names})
 
     def checking_players(self, name1, name2):
-        if name1 and name2 in self._table:
+        if name1 and name2 in self.table:
             return True
-        elif name1 not in Tournament.table:
+        elif name1 not in self.table:
             return f'O Jogador {name1} não foi registrado'
-        elif name2 not in Tournament.table:
+        elif name2 not in self.table:
             return f'O Jogador {name2} não foi registrado'
         else:
             return f'Nenhum Jogador foi encontrado'
 
-    @staticmethod
+    # @staticmethod
     def setting_won_losses(self, v_player, l_player):
-        if Tournament.checking_players(self, v_player, l_player) is True:
-            Tournament.__setitem__(self, v_player, l_player, 'WIN')
-            Tournament.__setitem__(self, l_player, v_player, 'LOSSES')
+        if self.checking_players(v_player, l_player) is True:
+            self.__setitem__(v_player, l_player, 'WIN')
+            self.__setitem__(l_player, v_player, 'LOSSES')
 
         else:
             print(Tournament.checking_players(self, v_player, l_player))
@@ -55,7 +55,7 @@ class Tournament(Player):
 
     def getting_points(self, name):
         if name in self.table:
-            return int(len(self.table[name]['WIN']) * 3 + len(self.table[name]['DRAW']))
+            return int(len(self.__getitem__(name, 'win')) * 3 + len(self.__getitem__(name, 'DRAW')))
 
     @staticmethod
     def merge(dic_1, dic_2):
@@ -82,13 +82,29 @@ class Swiss(Tournament):
         self.table[name]['TIE BREAK'].append(sb)
 
     def starting(self):
-        return Tournament.create_table(self, self.names)
+        return self.create_table(self.names)
 
     def first_pairing(self):
-        pass
+        pair = []
+        name_list = [i for i in self.table]
+        while name_list:
+            pairing = random.sample(name_list, 2)
+            pair.append(pairing)
+            name_list.remove(pairing[0])
+            name_list.remove(pairing[1])
+        return pair
 
     def pairing(self):
-        pass
+        pairing = {}
+        r_list = []
+        pairing.update({i: [self.table[i]['POINTS'].copy(), self.table[i]['TIE BREAK'].copy()] for i in self.table})
+        s_list = sorted(pairing, key=pairing.get, reverse=True)
+        while s_list:  # while to create a list of the pairings
+            a = s_list.pop(0)
+            b = s_list.pop(0)
+            c = (a, b)
+            r_list.append(c)
+        return r_list
 
     def first_bye(self):
         if len(self.table) % 2 != 0:
@@ -100,12 +116,15 @@ class Swiss(Tournament):
             return False
 
     def byes(self, names):
-        bye_1 = {names: Tournament.getting_points(self, names) for names in names}
+        # added the tiebreak
+        bye_1 = {names: [self.table[names]['TIE BREAK'].copy(), self.table[names]['TIE BREAK'].copy()] for names in
+                 names}
+        # may use a sort still thinking about it
         bye_return = min(bye_1, key=bye_1.get)
         Tournament.__setitem__(self, bye_return, 'BYE', 'WIN')
         return bye_return
 
-    @staticmethod  # function to get the number of rounds
+    @staticmethod
     def number_of_rounds_swiss(self):
         for x in range(Tournament.__len__(self._table)):
             if pow(2, x) >= Tournament.__len__(self._table):
