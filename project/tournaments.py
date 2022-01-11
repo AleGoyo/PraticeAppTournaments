@@ -121,7 +121,7 @@ class Swiss(Tournament):
                  names}
         # may use a sort still thinking about it
         bye_return = min(bye_1, key=bye_1.get)
-        Tournament.__setitem__(self, bye_return, 'BYE', 'WIN')
+        self.__setitem__(bye_return, 'BYE', 'WIN')
         return bye_return
 
     @staticmethod
