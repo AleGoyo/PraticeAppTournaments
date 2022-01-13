@@ -1,12 +1,10 @@
 import random
-from project import Player
 import copy  # importing to create a deepcopy of kind_results to be able to alter the mutable separately
 
 
-class Tournament(Player):
+class Tournament:
 
     def __init__(self):
-        super().__init__()
         self._table = {}
         self.kind_results = {'WIN': [], 'LOSSES': [], 'DRAW': [], 'POINTS': [], 'TIE BREAK': []}
 
@@ -51,7 +49,7 @@ class Tournament(Player):
             Tournament.__setitem__(self, player1, player2, 'DRAW')
             Tournament.__setitem__(self, player2, player1, 'DRAW')
         else:
-            print(Tournament.check(self, player1, player2))
+            print(Tournament.checking_players(self, player1, player2))
 
     def getting_points(self, name):
         if name in self.table:
@@ -68,14 +66,11 @@ class Swiss(Tournament):
         super().__init__()
         self.names = names
 
-    def __getitem__(self, name, item):
-        return self._table[name][item]
-
     def tie_breaking_sb(self, name):
         sv = []  # sum of the victory of the other players
         d = []  # sum of the draw of the other players
         for i in self.table:
-            if i is not name and i in self.table[name]['WIN'] or i in self.table[name]['DRAW']:
+            if i != name and i in self.table[name]['WIN'] or i in self.table[name]['DRAW']:
                 sv.append(len(self.table[i]['WIN']))
                 d.append(len(self.table[i]['DRAW']))
         sb = ((sum(sv) * 3) + (sum(d) * 1))  # calculating the tie break of Sonnenborn-Berger
@@ -87,6 +82,9 @@ class Swiss(Tournament):
     def first_pairing(self):
         pair = []
         name_list = [i for i in self.table]
+        bye = self.first_bye()
+        if bye:
+            name_list.remove(bye)
         while name_list:
             pairing = random.sample(name_list, 2)
             pair.append(pairing)
@@ -99,6 +97,10 @@ class Swiss(Tournament):
         r_list = []
         pairing.update({i: [self.table[i]['POINTS'].copy(), self.table[i]['TIE BREAK'].copy()] for i in self.table})
         s_list = sorted(pairing, key=pairing.get, reverse=True)
+        b = self.byes(s_list)
+        if b:
+            s_list.remove(b)
+            print(f'{b} BYE!')
         while s_list:  # while to create a list of the pairings
             a = s_list.pop(0)
             b = s_list.pop(0)
@@ -107,9 +109,9 @@ class Swiss(Tournament):
         return r_list
 
     def first_bye(self):
-        if len(self.table) % 2 != 0:
+        if self.__len__() % 2 != 0:
             z = random.sample(list(self.table), 1)
-            print(f'O Jogador{z[0]} esta de BYE')
+            print(f'O Jogador {z[0]} esta de BYE')
             Tournament.__setitem__(self, z[0], 'BYE', 'WIN')
             return z[0]
         else:
@@ -120,12 +122,14 @@ class Swiss(Tournament):
         bye_1 = {names: [self.table[names]['TIE BREAK'].copy(), self.table[names]['TIE BREAK'].copy()] for names in
                  names}
         # may use a sort still thinking about it
-        bye_return = min(bye_1, key=bye_1.get)
-        self.__setitem__(bye_return, 'BYE', 'WIN')
-        return bye_return
+        if self.__len__() % 2 != 0:
+            bye_return = min(bye_1, key=bye_1.get)
+            self.__setitem__(bye_return, 'BYE', 'WIN')
+            return bye_return
+        else:
+            return False
 
-    @staticmethod
     def number_of_rounds_swiss(self):
-        for x in range(Tournament.__len__(self._table)):
-            if pow(2, x) >= Tournament.__len__(self._table):
+        for x in range(self.__len__()):
+            if pow(2, x) >= self.__len__():
                 return int(x)
