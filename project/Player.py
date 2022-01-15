@@ -16,14 +16,12 @@ class Player:
     def name(self):
         return self._name
 
-    @name.setter
-    def name(self, new_name):
+    def name_setter(self, new_name):
         self._name = new_name.upper()
 
     @property
     def last_name(self):
         return self._last_name
 
-    @last_name.setter
-    def last_name(self, new_last_name):
+    def last_name_setter(self, new_last_name):
         self._last_name = new_last_name.upper()
