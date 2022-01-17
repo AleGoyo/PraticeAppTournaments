@@ -40,7 +40,6 @@ class Tournament:
         if self.checking_players(v_player, l_player) is True:
             self.__setitem__(v_player, l_player, 'WIN')
             self.__setitem__(l_player, v_player, 'LOSSES')
-
         else:
             print(Tournament.checking_players(self, v_player, l_player))
 
@@ -53,7 +52,14 @@ class Tournament:
 
     def getting_points(self, name):
         if name in self.table:
-            return int(len(self.__getitem__(name, 'win')) * 3 + len(self.__getitem__(name, 'DRAW')))
+            return int(len(self.__getitem__(name, 'WIN')) * 3 + len(self.__getitem__(name, 'DRAW')))
+
+    def setting_points(self, names):
+        for n in names:
+            if len(self.__getitem__(n, 'POINTS')) != 0:
+                self.table[n]['POINTS'].pop()
+        for n_1 in names:
+            self.table[n_1]['POINTS'].append(self.getting_points(n_1))
 
     @staticmethod
     def merge(dic_1, dic_2):
@@ -119,7 +125,7 @@ class Swiss(Tournament):
 
     def byes(self, names):
         # added the tiebreak
-        bye_1 = {names: [self.table[names]['TIE BREAK'].copy(), self.table[names]['TIE BREAK'].copy()] for names in
+        bye_1 = {names: [self.table[names]['POINTS'].copy(), self.table[names]['TIE BREAK'].copy()] for names in
                  names}
         # may use a sort still thinking about it
         if self.__len__() % 2 != 0:
