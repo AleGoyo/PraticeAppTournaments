@@ -75,101 +75,122 @@ if __name__ == '__main__':
         print('1: Registar/Alterar/Deletar Jogador')
         print('2: Começar campeonato')
         print('3:Exportar campeonato')
-        
-        menu = int(input('Escolha uma das opções:'))
-        if menu == 0:
-            menu = 0
+        try:
+            menu = int(input('Escolha uma das opções:'))
+        except ValueError:
+            print('Use apenas caracteres numéricos')
+        else:
+            if menu == 0:
+                menu = 0
 
-        # registering/altering/deleting players
-        elif menu == 1:
-            checking = 1
-            while checking != 0:
-                print('0:Fechar a Registro de Jogadores')
-                print('1:Registrar Jogadores:')
-                print('2:Alterar Jogadores:')
-                print('3:Deletar Jogadores')
-                print('4:Visualizar Jogadores')
-                menu_choice = int(input('Faça Sua escolha:'))
-                # closing the loop/done
-                if menu_choice == 0:
-                    checking = int(input('Deseja terminar o registro de jogadores?\n 0:sim \n 1:Não'))
-
-                # registering the players
-                elif menu_choice == 1:
-                    name = str(input('Nome do Jogador:'))
-                    last_name = str(input('Sobrenome do Jogador:'))
-                    registered_players.append(Player.Player(name, last_name))
-
-                # altering players
-                elif menu_choice == 2:
-                    name_altered = str(input('Digite o Nome do usuário a ser alterado:')).upper()
-                    last_name_altered = str(input('Digite o Sobrenome do usuário a ser alterado')).upper()
-                    to_be_altered = name_altered + last_name_altered
-                    for loop in registered_players:
-                        if to_be_altered == str(loop.name + loop.last_name).upper():
-                            new_name = str(input("Digite o Nome a ser alterado:"))
-                            new_last_name = str(input("Digite o Sobrenome a ser alterado:"))
-                            loop.name_setter(new_name)
-                            loop.last_name_setter(new_last_name)
-
-                # deleting player
-                elif menu_choice == 3:
-                    name_remove = str(input('Digite o Nome do Jogador a Ser removido:')).upper()
-                    last_name_remove = str(input('Digite o Sobrenome do Jogador a Ser removido:')).upper()
-                    to_be_removed = name_remove + last_name_remove
-                    if to_be_removed not in registered_players:
-                        print('Não Há jogadores com esse nome registrado')
-                    for loop in registered_players:
-                        if to_be_removed == str(loop.name + loop.last_name).upper():
-                            print(f'Você tem certeza que deseja deletar {loop.name} {loop.last_name}? ')
-                            sure = int(input('1: Sim\n2: Não'))
-                            if sure == 1:
-                                registered_players.remove(loop)
-                            else:
-                                break
-
-                # printing the players/done
-                elif menu_choice == 4:
-                    for obj in registered_players:
-                        print(obj)
-
-        # starting championship
-        elif menu == 2:
-            if len(registered_players) == 0:  # checking if there is no players registered
-                print('Não há Jogadores registrados!')
-                break
-            else:
-                swiss = Swiss(registered_players)
-                swiss.starting()
-                rounds = swiss.number_of_rounds_swiss()
-                print(f'Serão {rounds} rodadas')
-                for i in range(rounds):
-                    if i == 0:
-                        first_round = swiss.first_pairing()
-                        for j in range(len(first_round)):
-                            print(f'Mesa{j+1}:\t{first_round[j][0]}\t vs \t{first_round[j][1]}')
-                        apply_results_players_swiss(first_round)
-                        swiss.setting_points(registered_players)
-                        for player in registered_players:
-                            print(f'Resultados da rodada{i+1}:\t'
-                                  f'{player}:Vitorias:{len(swiss.__getitem__(player,"WIN"))}\t'
-                                  f'Derrotas:{len(swiss.__getitem__(player,"LOSSES"))}\t'
-                                  f'Empates:{len(swiss.__getitem__(player,"DRAW"))}\t'
-                                  f'Pontos:{swiss.__getitem__(player,"POINTS")}\n')
+            # registering/altering/deleting players
+            elif menu == 1:
+                checking = 1
+                while checking != 0:
+                    print('0:Fechar a Registro de Jogadores')
+                    print('1:Registrar Jogadores:')
+                    print('2:Alterar Jogadores:')
+                    print('3:Deletar Jogadores')
+                    print('4:Visualizar Jogadores')
+                    try:
+                        menu_choice = int(input('Faça Sua escolha:'))
+                    except ValueError:
+                        print('Use apenas caracteres numéricos')
                     else:
-                        print(f'Round{i+1}')
-                        n_round = swiss.pairing()
-                        for j in range(len(n_round)):
-                            print(f'Mesa{j + 1}:\t{n_round[j][0]}\t vs \t{n_round[j][1]}')
-                        apply_results_players_swiss(n_round)
-                        swiss.setting_points(registered_players)
-                        for player in registered_players:
-                            print(f'Resultados da rodada{i+1}:\t'
-                                  f'{player}:Vitorias:{len(swiss.__getitem__(player,"WIN"))}\t'
-                                  f'Derrotas:{len(swiss.__getitem__(player,"LOSSES"))}\t'
-                                  f'Empates:{len(swiss.__getitem__(player,"DRAW"))}\t'
-                                  f'Pontos:{swiss.__getitem__(player,"POINTS")}\n')
+                        # closing the loop/done
+                        if menu_choice == 0:
+                            try:
+                                checking = int(input('Deseja terminar o registro de jogadores?\n 0:sim \n 1:Não'))
+                            except ValueError:
+                                print('Use apenas caracteres numéricos')
 
-        # exporting the championship sheet
-        elif menu == 3:
-            pass
+                        # registering the players
+                        elif menu_choice == 1:
+                            name = str(input('Nome do Jogador:'))
+                            last_name = str(input('Sobrenome do Jogador:'))
+                            registered_players.append(Player.Player(name, last_name))
+
+                        # altering players
+                        elif menu_choice == 2:
+                            name_altered = str(input('Digite o Nome do usuário a ser alterado:')).upper()
+                            last_name_altered = str(input('Digite o Sobrenome do usuário a ser alterado')).upper()
+                            to_be_altered = name_altered + last_name_altered
+                            for loop in registered_players:
+                                if to_be_altered == str(loop.name + loop.last_name).upper():
+                                    new_name = str(input("Digite o Nome a ser alterado:"))
+                                    new_last_name = str(input("Digite o Sobrenome a ser alterado:"))
+                                    loop.name_setter(new_name)
+                                    loop.last_name_setter(new_last_name)
+
+                        # deleting player
+                        elif menu_choice == 3:
+                            name_remove = str(input('Digite o Nome do Jogador a Ser removido:')).upper()
+                            last_name_remove = str(input('Digite o Sobrenome do Jogador a Ser removido:')).upper()
+                            to_be_removed = name_remove + last_name_remove
+                            if to_be_removed not in registered_players:
+                                print('Não Há jogadores com esse nome registrado')
+                            for loop in registered_players:
+                                if to_be_removed == str(loop.name + loop.last_name).upper():
+                                    print(f'Você tem certeza que deseja deletar {loop.name} {loop.last_name}? ')
+                                    try:
+                                        sure = int(input('1: Sim\n2: Não'))
+                                    except ValueError:
+                                        print('Utilize apenas caracteres numéricos!')
+                                    else:
+                                        if sure == 1:
+                                            registered_players.remove(loop)
+                                        else:
+                                            break
+
+                        # printing the players/done
+                        elif menu_choice == 4:
+                            for obj in registered_players:
+                                print(obj)
+
+                        else:
+                            print('Opção inválida!')
+
+            # starting championship
+            elif menu == 2:
+                if len(registered_players) == 0:  # checking if there is no players registered
+                    print('Não há Jogadores registrados!')
+                    break
+                else:
+                    swiss = Swiss(registered_players)
+                    swiss.starting()
+                    rounds = swiss.number_of_rounds_swiss()
+                    print(f'Serão {rounds} rodadas')
+                    for i in range(rounds):
+                        if i == 0:
+                            first_round = swiss.first_pairing()
+                            for j in range(len(first_round)):
+                                print(f'Mesa{j+1}:\t{first_round[j][0]}\t vs \t{first_round[j][1]}')
+                            apply_results_players_swiss(first_round)
+                            swiss.setting_points(registered_players)
+                            for player in registered_players:
+                                print(f'Resultados da rodada{i+1}:\t'
+                                      f'{player}:Vitorias:{len(swiss.__getitem__(player,"WIN"))}\t'
+                                      f'Derrotas:{len(swiss.__getitem__(player,"LOSSES"))}\t'
+                                      f'Empates:{len(swiss.__getitem__(player,"DRAW"))}\t'
+                                      f'Pontos:{swiss.__getitem__(player,"POINTS")}\n')
+                        else:
+                            print(f'Round{i+1}')
+                            n_round = swiss.pairing()
+                            for j in range(len(n_round)):
+                                print(f'Mesa{j + 1}:\t{n_round[j][0]}\t vs \t{n_round[j][1]}')
+                            apply_results_players_swiss(n_round)
+                            swiss.setting_points(registered_players)
+                            for player in registered_players:
+                                print(f'Resultados da rodada{i+1}:\t'
+                                      f'{player}:Vitorias:{len(swiss.__getitem__(player,"WIN"))}\t'
+                                      f'Derrotas:{len(swiss.__getitem__(player,"LOSSES"))}\t'
+                                      f'Empates:{len(swiss.__getitem__(player,"DRAW"))}\t'
+                                      f'Pontos:{swiss.__getitem__(player,"POINTS")}\n')
+
+            # exporting the championship sheet
+            elif menu == 3:
+                print('in development!')
+                pass
+
+            else:
+                print('Opção Invalida!')
